@@ -72,8 +72,8 @@ module control_box(length, width, height, hole_side_offset=10, hole_end_offset=2
 
 union() {
     difference() {
-        control_box(150,50, 32, 5, 95);
-        translate([85,5,-2]) translate([25,21,5]) cube([50,42,10],center=true);
+        control_box(160,50, 32, 5, 20);
+        translate([65,5,-2]) translate([25,21,5]) cube([50,42,10],center=true);
         translate([12.5,5,-2]) translate([12.5,21,5]) cube([25,42,10],center=true);
         //translate([75,7,-2]) slot([0,0,0], [0,20,0],5,10);
         translate([145,0,10]) rotate([90,0,0]) cylinder(r=2.9,h=10);
@@ -103,7 +103,7 @@ union() {
         }
     }
     
-    translate([110,33,2]) {
+    translate([90,33,2]) {
         union() {
             screw_post(3, 8, [-32.5,0,0]);
             screw_post(3, 8, [32.5,0,0]);
