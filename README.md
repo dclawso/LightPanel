@@ -10,6 +10,10 @@ The parts consit of two halves for the light panel and a control box for the pow
 
 NOTE: There currently is no cover for the control box.
 
+<img src="models/ControlBox.png" width="300">
+<img src="models/LightPanelLeftHalf.png" width="300">
+<img src="models/LightPanelRighttHalf.png" width="300">
+
 ## The electronics
 
 The brains of the light panel is an Ardiono Nano v3. The power supply is a [Teyleten Robot 100W 6A DC-DC Buck Converter 10-90V](https://www.amazon.com/dp/B09FNBSZTR) which is way more power than required, but it has the capability to handle the 48V output available from the Ender 3's power supply and can handle enough current for the LED panel.
