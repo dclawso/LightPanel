@@ -12,7 +12,7 @@ NOTE: There currently is no cover for the control box.
 
 <img src="models/ControlBox.png" width="300">
 <img src="models/LightPanelLeftHalf.png" width="300">
-<img src="models/LightPanelRighttHalf.png" width="300">
+<img src="models/LightPanelRightHalf.png" width="300">
 
 ## The electronics
 
