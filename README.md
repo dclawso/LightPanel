@@ -16,7 +16,7 @@ NOTE: There currently is no cover for the control box.
 
 ## The electronics
 
-The brains of the light panel is an Ardiono Nano v3. The power supply is a [Teyleten Robot 100W 6A DC-DC Buck Converter 10-90V](https://www.amazon.com/dp/B09FNBSZTR) which is way more power than required, but it has the capability to handle the 48V output available from the Ender 3's power supply and can handle enough current for the LED panel.
+The brains of the light panel is an Arduino Nano v3. The power supply is a [Teyleten Robot 100W 6A DC-DC Buck Converter 10-90V](https://www.amazon.com/dp/B09FNBSZTR) which is way more power than required, but it has the capability to handle the 48V output available from the Ender 3's power supply and can handle enough current for the LED panel.
 
 Connnection to the Raspberry Pi running [Octoprint](https://octoprint.org/) was originally going to be serial over USB, but there were two problems, another cable, and 5v from the Pi colliding with 5v from the high power powersupply. To solve this issue, add an HC06 bluetooth dongle.
 
@@ -33,7 +33,7 @@ There are currently two commands:
 | Command|Usage | Description |
 | -- | -- | -- |
 | i | iddd | Set the intensity, replace ddd with a value between 0-100 to set intensity percentage. |
-| c | cRRGGBB | Set the color of the panel, RRGGGBB is the hex value for the RGB color. |
+| c | cRRGGBB | Set the color of the panel, RRGGBB is the hex value for the RGB color. |
 
 The commands are received via the RFCOMM interface. Each character is echoed back and the result, 0, 1, or -1 is returned. -1 indicates the command was not understood. 1 indicates the command failed, and 0 indicates the command was successful. The LED panel is updated on one second intervals, so the command may take up to a second to take effect.
 
