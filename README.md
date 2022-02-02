@@ -39,7 +39,7 @@ The commands are received via the RFCOMM interface. Each character is echoed bac
 
 ## Pictures
 
-These are pictures of the prototype control box. This was the original control box with the print stopped at about 4mm in height. This allowed a test assembly, which resulted in modifications. The control box SCAD file contains a control box which has been modified as a result of this test fitting.
+These are pictures of the prototype control box. This was the original control box with the print stopped at about 8mm in height. This allowed a test assembly, which resulted in modifications. The control box SCAD file contains a control box which has been modified as a result of this test fitting.
 
 <img src="pics/WIN_20220201_16_35_29_Pro.jpg" width="300">
 
