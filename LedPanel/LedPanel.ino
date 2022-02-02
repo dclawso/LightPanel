@@ -146,6 +146,7 @@ int setColor() {
     leds[i].g = g;
     leds[i].b = b;
   }
+  return 0;
 }
 
 void processcmd() {
