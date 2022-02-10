@@ -24,12 +24,17 @@
 
 #include <FastLED.h>
 
+#define CMDBUF_SIZE 32
+#define CMDBUF_INDEX_MASK (CMDBUF_SIZE - 1)
+
 #define DATA_PIN    3
 //#define CLK_PIN   4
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
 #define NUM_LEDS    256
 CRGB leds[NUM_LEDS];
+
+CRGB foreground = CRGB(0xffffff);
 
 // Params for width and height
 const uint8_t kMatrixWidth = 8;
@@ -106,7 +111,7 @@ void showLed(unsigned long cur) {
   }
 }
 
-char cmdbuf[16];
+char cmdbuf[CMDBUF_SIZE];
 char safe = 0;
 int cmdbufindex=0;
 
@@ -122,6 +127,12 @@ unsigned char getFromAscii(char *p) {
   return (hexchartoval(p[0]) << 4) | hexchartoval(p[1]);
 }
 
+void getColor(CRGB& rgb, char *p) {
+  rgb.r = getFromAscii(&p[0]);
+  rgb.g = getFromAscii(&p[2]);
+  rgb.b = getFromAscii(&p[4]);
+}
+
 int setIntensity() {
   int i = atoi(&cmdbuf[1]);
 
@@ -133,20 +144,58 @@ int setIntensity() {
 }
 
 int setColor() {
-  if ((cmdbufindex & 0xf) != 7) {
+  if ((cmdbufindex & CMDBUF_INDEX_MASK) != 7) {
     return 1;  
   }
-  unsigned char r = getFromAscii(&cmdbuf[1]);
-  unsigned char g = getFromAscii(&cmdbuf[3]);
-  unsigned char b = getFromAscii(&cmdbuf[5]);
+
+  getColor(foreground, &cmdbuf[1]);
 
   int i;
+
   for (i=0; i<NUM_LEDS; i++) {
-    leds[i].r = r;
-    leds[i].g = g;
-    leds[i].b = b;
+    leds[i] = foreground;
   }
+  
   return 0;
+}
+
+void drawRow(int y, CRGB& color) {
+  for (int i=0; i<kMatrixHeight; i++) {
+    leds[XY(i,y)] = color;
+  }
+}
+
+int setMeter() {
+  int numChars = cmdbufindex & CMDBUF_INDEX_MASK;
+  if (numChars != 4 && numChars != 10 && numChars != 16) {
+    return 1;
+  }
+
+  char tempchar = cmdbuf[3];
+  cmdbuf[3] = 0;
+  int percentage = atoi(&cmdbuf[1]);
+  if (percentage < 0 || percentage > 100) {
+    return 1;
+  }
+  cmdbuf[3] = tempchar;
+
+  CRGB bg = ~foreground;
+  CRGB fg = foreground;
+
+  if (numChars >= 10) {
+    getColor(fg, &cmdbuf[4]);
+  }
+
+  if (numChars >= 16) {
+    getColor(bg, &cmdbuf[10]);
+  }
+
+  int fgRows = kMatrixWidth * percentage / 100;
+  int bgRows = kMatrixWidth - fgRows;
+
+  for (int i=0; i<kMatrixWidth; i++) {
+    drawRow(i, (i > fgRows) ? bg : fg);
+  }
 }
 
 void processcmd() {
@@ -157,10 +206,15 @@ void processcmd() {
     case 'I':
       rc = setIntensity();
       break;
-     case 'c':
-     case 'C':
-       rc = setColor();
-       break;
+    case 'c':
+    case 'C':
+      rc = setColor();
+      break;
+    case 'P':
+    case 'p':
+      rc = setMeter();
+      break;
+
   }
   cmdbufindex = 0;
   bt.println(rc);
@@ -173,7 +227,7 @@ void handleSerial() {
     c = bt.read();
     bt.print(c);
     if (c == 0x08) {
-      if ((cmdbufindex & 0xf) > 0) {
+      if ((cmdbufindex & CMDBUF_INDEX_MASK) > 0) {
         cmdbufindex--;
         bt.print('\b');
         bt.print(' ');
@@ -183,7 +237,7 @@ void handleSerial() {
       bt.print('\n');
       processcmd();
     } else {
-      cmdbuf[cmdbufindex++ & 0xf] = c;
+      cmdbuf[cmdbufindex++ & CMDBUF_INDEX_MASK] = c;
     }
   }
 }
