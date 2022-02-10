@@ -34,6 +34,7 @@ There are currently two commands:
 | -- | -- | -- |
 | i | iddd | Set the intensity, replace ddd with a value between 0-100 to set intensity percentage. |
 | c | cRRGGBB | Set the color of the panel, RRGGBB is the hex value for the RGB color. |
+| p | pdddRRGGBBrrggbb | Set the LED panel as an progress meter. ddd is the percentage complete. RRGGBB is the hex value for the foreground color, rrggbb is the hex value for the background color. The percentage of the panel closest to the the provided progress percentage will consist of the foreground color.
 
 The commands are received via the RFCOMM interface. Each character is echoed back and the result, 0, 1, or -1 is returned. -1 indicates the command was not understood. 1 indicates the command failed, and 0 indicates the command was successful. The LED panel is updated on one second intervals, so the command may take up to a second to take effect.
 
