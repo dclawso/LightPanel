@@ -121,7 +121,7 @@ union() {
         translate([-2,22.5,25]) rotate([90,0,90]) mini_usb_cutout();
         
         // screw holes on end for future mounting possibilies
-        translate([150,22.5,15]) rotate([90,0,90]) union() {
+        translate([160,27.5,17.5]) rotate([90,0,90]) union() {
             $fn=16;
             translate([-7,-7,0]) cylinder(r=2,h=10,center=true);
             translate([-7,7,0]) cylinder(r=2,h=10,center=true);
