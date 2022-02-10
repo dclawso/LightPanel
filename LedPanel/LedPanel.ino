@@ -27,12 +27,15 @@
 #define CMDBUF_SIZE 32
 #define CMDBUF_INDEX_MASK (CMDBUF_SIZE - 1)
 
+#define LED_FRAME_RATE  (1000/25)
+
 #define DATA_PIN    3
 //#define CLK_PIN   4
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
 #define NUM_LEDS    256
 CRGB leds[NUM_LEDS];
+bool ledsUpdated = false;
 
 CRGB foreground = CRGB(0xffffff);
 
@@ -94,7 +97,6 @@ void setup() {
   // set master brightness control
   FastLED.setBrightness(BRIGHTNESS);
 
-
   uint16_t pos;
   for (pos=0;pos<NUM_LEDS;pos++) {
     leds[pos] = CRGB::White;
@@ -105,9 +107,12 @@ uint8_t y = 0;
 
 void showLed(unsigned long cur) {
   static unsigned long last = 0;
-  if ((cur - last) > 1000) {
+  if ((cur - last) > LED_FRAME_RATE) {
     last = cur;
-    FastLED.show(); 
+    if (!ledsUpdated) {
+      FastLED.show();
+      ledsUpdated = true; 
+    }
   }
 }
 
@@ -155,13 +160,13 @@ int setColor() {
   for (i=0; i<NUM_LEDS; i++) {
     leds[i] = foreground;
   }
-  
+
   return 0;
 }
 
-void drawRow(int y, CRGB& color) {
-  for (int i=0; i<kMatrixHeight; i++) {
-    leds[XY(i,y)] = color;
+void drawRow(int x, CRGB& color) {
+  for (int i=0; i<kMatrixWidth; i++) {
+    leds[XY(i,x)] = color;
   }
 }
 
@@ -171,15 +176,18 @@ int setMeter() {
     return 1;
   }
 
-  char tempchar = cmdbuf[3];
-  cmdbuf[3] = 0;
+  char tempchar = cmdbuf[4];
+  cmdbuf[4] = 0;
   int percentage = atoi(&cmdbuf[1]);
   if (percentage < 0 || percentage > 100) {
     return 1;
   }
-  cmdbuf[3] = tempchar;
+  cmdbuf[4] = tempchar;
 
-  CRGB bg = ~foreground;
+  CRGB bg;
+  bg.r = 0xff - foreground.r;
+  bg.g = 0xff - foreground.g;
+  bg.b = 0xff - foreground.b;
   CRGB fg = foreground;
 
   if (numChars >= 10) {
@@ -190,12 +198,30 @@ int setMeter() {
     getColor(bg, &cmdbuf[10]);
   }
 
-  int fgRows = kMatrixWidth * percentage / 100;
-  int bgRows = kMatrixWidth - fgRows;
+  int fgRows = kMatrixHeight * percentage / 100;
 
-  for (int i=0; i<kMatrixWidth; i++) {
+  for (int i=0; i<kMatrixHeight; i++) {
     drawRow(i, (i > fgRows) ? bg : fg);
   }
+
+  return 0;
+}
+
+int test() {
+  int numChars = cmdbufindex & CMDBUF_INDEX_MASK;
+  if (numChars != 4 && numChars != 10) {
+    return 1;
+  }
+
+  CRGB c = CRGB(0xff0000);
+  if (numChars == 10)  getColor(c, &cmdbuf[4]);
+  cmdbuf[4] = 0;
+  int xy = atoi(&cmdbuf[1]);
+  int x = xy/100;
+  int y = xy % 100;
+
+  leds[XY(x,y)] = c;
+  return 0;
 }
 
 void processcmd() {
@@ -214,9 +240,15 @@ void processcmd() {
     case 'p':
       rc = setMeter();
       break;
-
+    case 'T':
+    case 't':
+      rc = test();
+      break;
   }
   cmdbufindex = 0;
+  if (rc == 0) {
+    ledsUpdated = false;
+  }
   bt.println(rc);
 }
 
