@@ -24,4 +24,4 @@ include <LightPanelHalf.scad>
 
 translate([162,0,0])
 mirror(v=[1,0,0])
-LightPanelHalf();
+LightPanelHalf(length=161,width=82,ridge=2);

@@ -20,30 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+module slot(w,l,h) {
+    hull() {
+        cylinder(d=w,h=h);
+        translate([l,0,0]) cylinder(d=w,h=h);
+    }
+}
+
 module LightPanelHalf(length=160,width=80,ridge=2) {
     difference() {
         // main box for the panel
-        translate([length/2+ridge-1,width/2+2,2.5])
-        cube([length+ridge,width+ridge*2,5], center=true);
+        cube([length+1,width+2,5]);
         
         /// cut out the top of the panel
-        translate([ridge+1,ridge+1,3])
-        translate([length/2-(ridge-1)/2,width/2-ridge/2,1.5]) cube([length+ridge-1,width-ridge,3], center=true);
+        translate([ridge+1,ridge+1,3.9]) cube([length+ridge,width-ridge*2,2]);
         
         // make a notch for the LED panel
-        translate([ridge,ridge,3])
-        translate([length/2,width/2,.5]) cube([length+2,width,1], center=true);
+        translate([1,1,3]) cube([length+1,width,1]);
         
-        // make a hole in the back, saves filament, print time, and provides
         // space for DIN,DOUT cables.
-        translate([12,12,-.5])
-        translate([(length-38)/2,(width-18)/2,2.5]) cube([length-38,width-18,5], center=true);
+        translate([30,50,-1]) cube([20,20,8]);
 
         // make cutout for power wires in the center
-        translate([length-12,49,-.5])
-        translate([7.5,12.5,2.5]) cube([15,25,5], center=true);
+        translate([length-15+ridge,50,-1]) cube([15+1,25,5]);
         
-        $fn=16;
+        $fn=64;
         translate([156, 10, 0]) {
             translate([1.5,1.5,-1]) cylinder(r=1.5,h=10);
 
@@ -53,5 +54,20 @@ module LightPanelHalf(length=160,width=80,ridge=2) {
             translate([0,30,0])
             translate([1.5,1.5,-1]) cylinder(r=1.5,h=10);      
         }
+        translate([20,15,-1]) rotate([0,0,135]) slot(5,12,10);
+        translate([30,15,-1]) rotate([0,0,135]) slot(5,27,10);
+        for (x=[40,50,60,70,80,90]) {
+            translate([x,15,-1]) rotate([0,0,135]) slot(5,40,10);
+        }
+        translate([100,15,-1]) rotate([0,0,135]) slot(5,60,10);
+        translate([110,15,-1]) rotate([0,0,135]) slot(5,75,10);
+        for (x=[120,130,140]) {
+            translate([x,15,-1]) rotate([0,0,135]) slot(5,80,10);
+        }
+        translate([140,25,-1]) rotate([0,0,135]) slot(5,67,10);
+        translate([140,35,-1]) rotate([0,0,135]) slot(5,52,10);
+        translate([140,45,-1]) rotate([0,0,135]) slot(5,37,10);
+        translate([140,55,-1]) rotate([0,0,135]) slot(5,23,10);
+        translate([140,65,-1]) rotate([0,0,135]) slot(5,8,10);
     }
 }

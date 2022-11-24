@@ -22,4 +22,4 @@
 
 include <LightPanelHalf.scad>
 
-LightPanelHalf();
+LightPanelHalf(length=161,width=82,ridge=2);

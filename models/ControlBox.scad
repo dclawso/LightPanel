@@ -35,6 +35,7 @@ module mini_usb_cutout() {
 // in the center.
 module screw_post(diameter, height,location=[0,0,0])
 {
+    $fn=64;
     r = diameter/2;
     translate(location)
     translate([0,0,height/2])
@@ -54,6 +55,7 @@ module ocube(length, width, height) {
 
 // make a positive which can be used to cut a slot with rounded ends
 module slot(loc1, loc2, dia, height) {
+    $fn=64;
     hull() {
         translate(loc1) cylinder(r=dia/2, h=height);
         translate(loc2) cylinder(r=dia/2, h=height);
@@ -63,6 +65,7 @@ module slot(loc1, loc2, dia, height) {
 // make the very specific control box.
 //    rather than being subtractive, the main box is built as a union of floor, walls, and screw posts.
 module control_box(length, width, height, hole_side_offset=10, hole_end_offset=20) {
+    $fn=64;
     translate([0,0,0]) {
         difference() {
             union() {
